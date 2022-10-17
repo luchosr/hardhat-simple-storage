@@ -1,6 +1,6 @@
 // imports
 
-const { ethers } = require("hardhat")
+const { ethers, run, network } = require("hardhat")
 
 // async main
 async function main() {
@@ -15,11 +15,27 @@ async function main() {
     // what's the rpc url?
 
     console.log(`Deployed contract to: ${simpleStorage.address}`)
+    if (network.config.chainId === 420 && process.env.ETHERSCAN_API_KEY) {
+        console.log("Waiting for block confirmations...")
+        await simpleStorage.deployTransaction.wait(6)
+        await verify(simpleStorage.address, [])
+    }
 }
 
 async function verify(contractAddress, args) {
     console.log("Verifying conrtact... ")
-    await run("verify")
+    try {
+        await run("verify:verify", {
+            address: contractAddress,
+            constructorArguments: args,
+        })
+    } catch (e) {
+        if (e.message.toLowerCase().includes("already verified")) {
+            console.log("already verified")
+        } else {
+            console.log(e)
+        }
+    }
 }
 
 // main
