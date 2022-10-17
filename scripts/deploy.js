@@ -17,6 +17,11 @@ async function main() {
     console.log(`Deployed contract to: ${simpleStorage.address}`)
 }
 
+async function verify(contractAddress, args) {
+    console.log("Verifying conrtact... ")
+    await run("verify")
+}
+
 // main
 
 main()
