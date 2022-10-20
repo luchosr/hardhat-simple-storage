@@ -15,11 +15,20 @@ async function main() {
     // what's the rpc url?
 
     console.log(`Deployed contract to: ${simpleStorage.address}`)
-    if (network.config.chainId === 420 && process.env.ETHERSCAN_API_KEY) {
-        console.log("Waiting for block confirmations...")
-        await simpleStorage.deployTransaction.wait(6)
-        await verify(simpleStorage.address, [])
-    }
+    // if (network.config.chainId === 420 && process.env.ETHERSCAN_API_KEY) {
+    //     console.log("Waiting for block confirmations...")
+    //     await simpleStorage.deployTransaction.wait(6)
+    //     await verify(simpleStorage.address, [])
+    // }
+
+    const currentValue = await simpleStorage.retrieve()
+    console.log(`Current Value is: ${currentValue}`)
+
+    // Update the current value
+    const transactionResponse = await simpleStorage.store(7)
+    await transactionResponse.wait(1)
+    const updatedValue = await simpleStorage.retrieve()
+    console.log(`Updated Value is: ${updatedValue}`)
 }
 
 async function verify(contractAddress, args) {
